@@ -4,6 +4,7 @@ from selenium.webdriver.chrome.options import Options
 import time
 import datetime
 from cred import email, password
+from colors import bcolors
 
 from timetable import timetable, tim
 
@@ -22,10 +23,13 @@ opt.add_experimental_option("prefs", {
 })
 opt.add_experimental_option("excludeSwitches", ['enable-automation'])
 
-driver = webdriver.Chrome(options=opt)
+path = 'C:/path/to/chromedriver.exe'  # Enter the path to chromedriver here
+
+driver = webdriver.Chrome(
+    options=opt, executable_path=path)
 URL = "https://teams.microsoft.com/"
 driver.get(URL)
-time.sleep(5)
+time.sleep(10)  # est. time to load the site
 
 
 def login():
@@ -34,76 +38,91 @@ def login():
     emailField.click()
     emailField.send_keys(email)
     driver.find_element(By.XPATH, '//input[@id="idSIButton9"]').click()
-    print("Email entered")
-    time.sleep(3)
+    print(f"{bcolors.OKGREEN}{bcolors.BOLD}Email entered{bcolors.ENDC}")
+    time.sleep(5)  # password scr. est. time
     passwd = driver.find_element(By.XPATH, '//input[@name="passwd"]')
     passwd.click()
     passwd.send_keys(password)
     driver.find_element(By.XPATH, '//input[@id="idSIButton9"]').click()
-    print("Password Entered")
-    time.sleep(3)
+    print(f"{bcolors.OKGREEN}{bcolors.BOLD}Password Entered{bcolors.ENDC}")
+    time.sleep(3)  # stay signed scr. est. time
     driver.find_element(By.XPATH, '//input[@id="idSIButton9"]').click()
 
 
+def timediff():  # tells the difference between current time and next class time
+    count = 0
+    now = datetime.datetime.now().strftime("%0H.%M")
+    for i in tim:
+        count = count+1
+        if now <= i:
+            break
+
+    format = '%H.%M'
+    timer = datetime.datetime.strptime(
+        tim[count-1], format) - datetime.datetime.strptime(now, format)
+    ftime = str(timer)
+    stime = (int(ftime[2:4]))
+    return stime
+
+
 def join(cls, now):
-    try:
-        joinbtn = driver.find_element(
-            By.XPATH, '//button[@title="Join call with video"]')
-        joinbtn.click()
+    while True:
+        try:
+            joinbtn = driver.find_element(
+                By.XPATH, '//button[@title="Join call with video"]')
+            joinbtn.click()
 
-    except:
-        i = 1
-        while(i <= 15):
-            print("Meeting hasn't started yet, trying again")
-            time.sleep(60)
-            driver.refresh()
-            join(cls, now)
-            i += 1
-            print(f"{cls} is not scheduled today!")
+        except:
+            print(
+                f"{bcolors.WARNING}Class not sheduled yet!, trying again in 5 mins{bcolors.ENDC}")
+            time.sleep(300)
+            if timediff() <= 30:  # if class is not scheduled at correct time, retried every 5mins for 20mins
+                print(
+                    f"{bcolors.FAIL}{bcolors.BOLD}No class Scheduled!{bcolors.ENDC}")
+                break
 
-    else:
-        time.sleep(4)
-        webcam = driver.find_element(
-            By.XPATH, '//*[@id="page-content-wrapper"]/div[1]/div/calling-pre-join-screen/div/div/div[2]/div[1]/div[2]/div/div/section/div[2]/toggle-button[1]/div/button/span[1]')
-        if(webcam.get_attribute('title') == 'Turn camera off'):
-            webcam.click()
-        time.sleep(1)
+        else:
+            time.sleep(4)
+            webcam = driver.find_element(
+                By.XPATH, '//*[@id="page-content-wrapper"]/div[1]/div/calling-pre-join-screen/div/div/div[2]/div[1]/div[2]/div/div/section/div[2]/toggle-button[1]/div/button/span[1]')
+            if(webcam.get_attribute('title') == 'Turn camera off'):
+                webcam.click()
+            time.sleep(1)
 
-        microphone = driver.find_element(By.XPATH,
-                                         '//*[@id="preJoinAudioButton"]/div/button/span[1]')
-        if(microphone.get_attribute('title') == 'Mute microphone'):
-            microphone.click()
+            microphone = driver.find_element(By.XPATH,
+                                             '//*[@id="preJoinAudioButton"]/div/button/span[1]')
+            if(microphone.get_attribute('title') == 'Mute microphone'):
+                microphone.click()
 
-        time.sleep(1)
-        joinnowbtn = driver.find_element(By.XPATH,
-                                         '//*[@id="page-content-wrapper"]/div[1]/div/calling-pre-join-screen/div/div/div[2]/div[1]/div[2]/div/div/section/div[1]/div/div/button')
-        joinnowbtn.click()
-        print(f"joined class: {cls} at {now}")
-
-
-def jointest(cls, now):
-    print(f"Joined cls: {cls} at {now}")
+            time.sleep(1)
+            joinnowbtn = driver.find_element(By.XPATH,
+                                             '//*[@id="page-content-wrapper"]/div[1]/div/calling-pre-join-screen/div/div/div[2]/div[1]/div[2]/div/div/section/div[1]/div/div/button')
+            joinnowbtn.click()
+            print(f"{bcolors.HEADER}joined class: {cls} at {now}{bcolors.ENDC}")
+            break
 
 
 def leave(cls):
+    now = datetime.datetime.now().strftime("%0H.%M")
     teamsbtn = driver.find_element(
         By.XPATH, '//button[@id="app-bar-2a84919f-59d8-4441-a975-2a8c2643b741"]')
     try:
-        driver.find_element(By.XPATH, '//button[@id="hangup-button"]').click()
-        print(f"Left from: {cls}")
         teamsbtn.click()
+        time.sleep(3)
+        driver.find_element(By.XPATH, '//button[@id="hangup-button"]').click()
+        print(f"{bcolors.WARNING}Left from: {cls} at {now}{bcolors.ENDC}\n")
         teamsbtn.click()
 
     except:
-        print(f"Left from: {cls}")
+        print(f"{bcolors.WARNING}Left from: {cls} at {now}{bcolors.ENDC}\n")
         teamsbtn.click()
         teamsbtn.click()
 
 
 def selectClass():
     today = datetime.datetime.now().strftime("%A")
-    print("Logged in")
-    time.sleep(20)
+    print('\x1b[6;30;42m' + "Logged in" + '\x1b[0m' + "\n")
+    time.sleep(25)  # est. time to show teams
     now = datetime.datetime.now().strftime("%0H.%M")
     # now = "14.42"
     count = 0
@@ -123,11 +142,10 @@ def selectClass():
         format = '%H.%M'
         timer = datetime.datetime.strptime(
             tim[count-1], format) - datetime.datetime.strptime(now, format)
-        # print(timer)
         ftime = str(timer)
         stime = (int(ftime[2:4]))
         ftime = stime * 60
-        print(f"Class time duration: {stime}min / {ftime}sec")
+        print(f"Class: {cls}\nTime duration: {stime}min / {ftime}sec")
 
         if cls == "free":
             print("\nFree Class\n")
@@ -138,13 +156,11 @@ def selectClass():
         else:
             driver.find_element(
                 By.XPATH, f'//div[@aria-label="{cls}"]').click()
-            time.sleep(20)
-            jointest(cls, now)
-            print(f"Attending class for the next {stime}mins")
-            time.sleep(ftime)
+            time.sleep(20)  # class page est. time
+            join(cls, now)
+            print(f"{bcolors.WARNING}Queued for the next {stime}mins{bcolors.ENDC}")
+            time.sleep(ftime)  # class time (current time - next class time)
             leave(cls)
-            # driver.find_element(
-            #     By.XPATH, f'//button[@aria-label="Go back to all teams"]').click()
             time.sleep(60)
 
 

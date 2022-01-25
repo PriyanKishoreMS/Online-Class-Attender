@@ -21,5 +21,6 @@ timetable = {
     "Sunday": [cn, maths, brk, coa, os, free, dp, dp, nde],
 }
 
+# start time of every class
 tim = ["08.30", "09.20", "10.10", "10.30",
        "11.20", "12.10", "13.00", "13.50", "14.40", "15.30"]
