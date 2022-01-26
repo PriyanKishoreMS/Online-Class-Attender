@@ -23,10 +23,8 @@ opt.add_experimental_option("prefs", {
 })
 opt.add_experimental_option("excludeSwitches", ['enable-automation'])
 
-path = 'C:/path/to/chromedriver.exe'  # Enter the path to chromedriver here
-
 driver = webdriver.Chrome(
-    options=opt, executable_path=path)
+    options=opt)
 URL = "https://teams.microsoft.com/"
 driver.get(URL)
 time.sleep(10)  # est. time to load the site
@@ -51,7 +49,7 @@ def login():
 
 def timediff():  # tells the difference between current time and next class time
     count = 0
-    now = datetime.datetime.now().strftime("%0H.%M")
+    now = datetime.datetime.now().strftime("%H.%M")
     for i in tim:
         count = count+1
         if now <= i:
@@ -60,9 +58,9 @@ def timediff():  # tells the difference between current time and next class time
     format = '%H.%M'
     timer = datetime.datetime.strptime(
         tim[count-1], format) - datetime.datetime.strptime(now, format)
-    ftime = str(timer)
-    stime = (int(ftime[2:4]))
-    return stime
+    stime = str(timer)
+    mins = (int(stime[2:4]))
+    return mins
 
 
 def join(cls, now):
@@ -103,7 +101,7 @@ def join(cls, now):
 
 
 def leave(cls):
-    now = datetime.datetime.now().strftime("%0H.%M")
+    now = datetime.datetime.now().strftime("%H.%M")
     teamsbtn = driver.find_element(
         By.XPATH, '//button[@id="app-bar-2a84919f-59d8-4441-a975-2a8c2643b741"]')
     try:
@@ -123,7 +121,7 @@ def selectClass():
     today = datetime.datetime.now().strftime("%A")
     print('\x1b[6;30;42m' + "Logged in" + '\x1b[0m' + "\n")
     time.sleep(25)  # est. time to show teams
-    now = datetime.datetime.now().strftime("%0H.%M")
+    now = datetime.datetime.now().strftime("%H.%M")
     # now = "14.42"
     count = 0
     for i in tim:
@@ -131,35 +129,32 @@ def selectClass():
         if now <= i:
             break
     for cls in timetable[today][count-2:]:
-        now = datetime.datetime.now().strftime("%0H.%M")
-        # now = "14.42"
-        count = 0
-        for i in tim:
-            count = count+1
-            if now <= i:
-                break
-
-        format = '%H.%M'
-        timer = datetime.datetime.strptime(
-            tim[count-1], format) - datetime.datetime.strptime(now, format)
-        ftime = str(timer)
-        stime = (int(ftime[2:4]))
-        ftime = stime * 60
-        print(f"Class: {cls}\nTime duration: {stime}min / {ftime}sec")
+        now = datetime.datetime.now().strftime("%H.%M")
+        mins = timediff()
+        secs = mins * 60
+        print(f"Class: {cls}\nTime duration: {mins}min / {secs}sec")
 
         if cls == "free":
-            print("\nFree Class\n")
-            time.sleep(ftime)
+            print("\nFree Class")
+            print(
+                f"{bcolors.WARNING}Queued for the next {timediff()}mins{bcolors.ENDC}")
+            time.sleep(timediff()*60)
+            time.sleep(60)
         elif cls == "break":
-            print("\n20 mins Break\n")
-            time.sleep(ftime)
+            print("\n20 mins Break")
+            print(
+                f"{bcolors.WARNING}Queued for the next {timediff()}mins{bcolors.ENDC}")
+            time.sleep(timediff()*60)
+            time.sleep(60)
         else:
             driver.find_element(
                 By.XPATH, f'//div[@aria-label="{cls}"]').click()
             time.sleep(20)  # class page est. time
             join(cls, now)
-            print(f"{bcolors.WARNING}Queued for the next {stime}mins{bcolors.ENDC}")
-            time.sleep(ftime)  # class time (current time - next class time)
+            print(
+                f"{bcolors.WARNING}Queued for the next {timediff()}mins{bcolors.ENDC}")
+            # class time (current time - next class time)
+            time.sleep(timediff()*60)
             leave(cls)
             time.sleep(60)
 

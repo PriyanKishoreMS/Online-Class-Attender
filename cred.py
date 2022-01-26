@@ -1,2 +1,2 @@
-email = "your teams login email id"
+email = "your teams login mail id"
 password = "your password"
