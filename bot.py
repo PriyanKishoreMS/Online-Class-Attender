@@ -140,7 +140,7 @@ def selectClass():
             time.sleep(timediff()*60)
             time.sleep(60)
         elif cls == "break":
-            print("20 mins Break")
+            print("Break")
             print(
                 f"{bcolors.WARNING}Queued for the next {timediff()}mins{bcolors.ENDC}\n")
             time.sleep(timediff()*60)

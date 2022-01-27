@@ -13,11 +13,11 @@ brk = "break"
 
 
 timetable = {
-    "Monday": [maths, de, brk, nde, nde, free, osLab, osLab, osLab],
-    "Tuesday": [cn, maths, brk, coa, os, free, dp, dp, nde],
-    "Wednesday": [de, free, brk, cn, coa, free, cnLab, cnLab, cnLab],
-    "Thursday": [os, cn, brk, os, maths, free, coa, free, free],
-    "Friday": [os, maths, brk, maths, coa, free, de, de, free],
+    "Monday": [maths, de, brk, nde, nde, brk, osLab, osLab, osLab],
+    "Tuesday": [cn, maths, brk, coa, os, brk, dp, dp, nde],
+    "Wednesday": [de, free, brk, cn, coa, brk, cnLab, cnLab, cnLab],
+    "Thursday": [os, cn, brk, os, maths, brk, coa, free, free],
+    "Friday": [os, maths, brk, maths, coa, brk, de, de, free],
 }
 
 # start time of every class
