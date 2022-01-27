@@ -129,27 +129,27 @@ def selectClass():
         if now <= i:
             break
     for cls in timetable[today][count-2:]:
-        now = datetime.datetime.now().strftime("%H.%M")
         mins = timediff()
         secs = mins * 60
         print(f"Class: {cls}\nTime duration: {mins}min / {secs}sec")
 
         if cls == "free":
-            print("\nFree Class")
+            print("Free Class")
             print(
-                f"{bcolors.WARNING}Queued for the next {timediff()}mins{bcolors.ENDC}")
+                f"{bcolors.WARNING}Queued for the next {timediff()}mins{bcolors.ENDC}\n")
             time.sleep(timediff()*60)
             time.sleep(60)
         elif cls == "break":
-            print("\n20 mins Break")
+            print("20 mins Break")
             print(
-                f"{bcolors.WARNING}Queued for the next {timediff()}mins{bcolors.ENDC}")
+                f"{bcolors.WARNING}Queued for the next {timediff()}mins{bcolors.ENDC}\n")
             time.sleep(timediff()*60)
             time.sleep(60)
         else:
             driver.find_element(
                 By.XPATH, f'//div[@aria-label="{cls}"]').click()
             time.sleep(20)  # class page est. time
+            now = datetime.datetime.now().strftime("%H.%M")
             join(cls, now)
             print(
                 f"{bcolors.WARNING}Queued for the next {timediff()}mins{bcolors.ENDC}")

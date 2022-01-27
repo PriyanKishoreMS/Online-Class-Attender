@@ -18,7 +18,6 @@ timetable = {
     "Wednesday": [de, free, brk, cn, coa, free, cnLab, cnLab, cnLab],
     "Thursday": [os, cn, brk, os, maths, free, coa, free, free],
     "Friday": [os, maths, brk, maths, coa, free, de, de, free],
-    "Sunday": [cn, maths, brk, coa, os, free, dp, dp, nde],
 }
 
 # start time of every class
