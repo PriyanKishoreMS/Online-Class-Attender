@@ -9,6 +9,7 @@ from colors import bcolors
 from timetable import timetable, tim
 
 opt = Options()
+# opt.add_argument('headless') #Headless Chrome
 opt.add_argument("--disable-infobars")
 opt.add_argument("--disable-extensions")
 opt.add_argument("--start-maximized")
@@ -63,7 +64,7 @@ def timediff():  # tells the difference between current time and next class time
     return mins
 
 
-def join(cls, now):
+def join(cls):
     while True:
         try:
             joinbtn = driver.find_element(
@@ -96,6 +97,7 @@ def join(cls, now):
             joinnowbtn = driver.find_element(By.XPATH,
                                              '//*[@id="page-content-wrapper"]/div[1]/div/calling-pre-join-screen/div/div/div[2]/div[1]/div[2]/div/div/section/div[1]/div/div/button')
             joinnowbtn.click()
+            now = datetime.datetime.now().strftime("%H.%M")
             print(f"{bcolors.HEADER}joined class: {cls} at {now}{bcolors.ENDC}")
             break
 
@@ -149,8 +151,7 @@ def selectClass():
             driver.find_element(
                 By.XPATH, f'//div[@aria-label="{cls}"]').click()
             time.sleep(20)  # class page est. time
-            now = datetime.datetime.now().strftime("%H.%M")
-            join(cls, now)
+            join(cls)
             print(
                 f"{bcolors.WARNING}Queued for the next {timediff()}mins{bcolors.ENDC}")
             # class time (current time - next class time)
