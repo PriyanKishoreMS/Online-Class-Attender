@@ -78,13 +78,14 @@ def join(cls):
             joinbtn.click()
 
         except:
-            print(
-                f"{bcolors.WARNING}Class not sheduled yet!, trying again in 5 mins{bcolors.ENDC}")
-            time.sleep(300)
             if timediff() <= 30:  # if class is not scheduled at correct time, retried every 5mins for 20mins
                 print(
                     f"{bcolors.FAIL}{bcolors.BOLD}No class Scheduled!{bcolors.ENDC}")
                 break
+            else:
+                print(
+                    f"{bcolors.WARNING}Class not sheduled yet!, trying again in 5 mins{bcolors.ENDC}")
+                time.sleep(300)
 
         else:
             time.sleep(4)
