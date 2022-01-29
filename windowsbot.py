@@ -38,7 +38,7 @@ time.sleep(10)  # est. time to load the site
 
 
 def login():
-    emailField = emailField = driver.find_element(
+    emailField = driver.find_element(
         By.XPATH, '//input[@id="i0116"]')
     emailField.click()
     emailField.send_keys(email)
